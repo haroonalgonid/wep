@@ -1,0 +1,181 @@
+/* AddFlightForm.css */
+
+/* Base Variables */
+:root {
+  --primary: #4CAF50;
+  --primary-hover: #388E3C;
+  --primary-light: #66BB6A;
+  --primary-very-light: #E8F5E9;
+  --white: #FFFFFF;
+  --black: #212121;
+  --gray-100: #F5F5F5;
+  --gray-200: #EEEEEE;
+  --gray-300: #E0E0E0;
+  --gray-400: #BDBDBD;
+  --gray-500: #9E9E9E;
+  --gray-600: #757575;
+  --gray-700: #616161;
+  --gray-800: #424242;
+  --border-radius: 6px;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+/* Form Container */
+form {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  direction: rtl;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* Title for the form if needed */
+form h2 {
+  grid-column: 1 / -1;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 24px;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+form h2::after {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 3px;
+  background-color: var(--primary);
+  bottom: 0;
+  right: 50%;
+  transform: translateX(50%);
+  border-radius: 3px;
+}
+
+/* Form Groups */
+form > div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Labels */
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--gray-800);
+  font-size: 14px;
+}
+
+/* Input Fields */
+input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--border-radius);
+  background-color: var(--white);
+  color: var(--black);
+  font-size: 16px;
+  transition: var(--transition);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-very-light);
+}
+
+input:hover {
+  border-color: var(--gray-400);
+}
+
+/* Number inputs */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Datetime inputs */
+input[type="datetime-local"] {
+  padding: 10px 14px;
+}
+
+/* Button */
+.add-flight-btn {
+  grid-column: 1 / -1;
+  padding: 14px 24px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  font-weight: 600;
+ 
+  transition: var(--transition);
+  width: 100%;
+  max-width: 200px;
+}
+
+.add-flight-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.add-flight-btn:active {
+  transform: translateY(1px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  form {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  
+  button {
+    max-width: 100%;
+  }
+}
+
+/* Optional: Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+form {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Optional: Form field groups */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+/* Optional: For validation states */
+input.invalid {
+  border-color: #ff5252;
+  background-color: rgba(255, 82, 82, 0.05);
+}
+
+/* If you need to update the DOM structure to match this CSS better, wrap each label+input in a div with class "form-group" */

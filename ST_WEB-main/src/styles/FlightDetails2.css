@@ -1,0 +1,691 @@
+/* FlightDetails2.css - تنسيق محسّن لصفحة تفاصيل الطبيب */
+
+:root {
+  --primary-color: #5D5CDE;
+  --primary-dark: #4b4ab8;
+  --primary-light: #7c7be5;
+  --primary-ultra-light: #f0f0ff;
+  --success-color: #4caf50;
+  --success-dark: #3d8b40;
+  --warning-color: #ff9800;
+  --danger-color: #f44336;
+  --danger-dark: #d32f2f;
+  --gray-dark: #555;
+  --gray-medium: #888;
+  --gray-light: #ddd;
+  --text-color: #333;
+  --text-light: #666;
+  --background-light: #ffffff;
+  --card-background-light: #ffffff;
+  --border-color: #eaeaea;
+  --border-radius-sm: 4px;
+  --border-radius: 8px;
+  --border-radius-lg: 16px;
+  --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --transition: all 0.3s ease;
+  --transition-fast: all 0.15s ease;
+}
+
+/* تنسيق عام للصفحة */
+.flight-details {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 25px;
+  box-sizing: border-box;
+  font-family: 'Tajawal', 'Cairo', 'Segoe UI', sans-serif;
+  color: var(--text-color);
+  background-color: var(--background-light);
+  line-height: 1.6;
+}
+
+/* تحسين اتجاه النص للغة العربية */
+[dir="rtl"] {
+  text-align: right;
+  font-family: 'Tajawal', 'Cairo', 'Segoe UI', sans-serif;
+}
+
+/* عنوان الصفحة الرئيسي */
+.flight-details h2 {
+  color: var(--primary-color);
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--primary-light);
+  font-size: 2rem;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+}
+
+.flight-details h2::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: 0;
+  width: 60px;
+  height: 4px;
+  background-color: var(--primary-color);
+  border-radius: 10px;
+}
+
+/* العناوين الفرعية */
+.flight-details h3 {
+  color: var(--primary-color);
+  margin: 25px 0 18px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  position: relative;
+  padding-right: 15px;
+}
+
+.flight-details h3::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 20px;
+  background-color: var(--primary-color);
+  border-radius: 3px;
+}
+
+/* قسم عرض التفاصيل */
+.details-view {
+  background-color: var(--card-background-light);
+  border-radius: var(--border-radius-lg);
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+
+.details-view:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.details-view p {
+  margin: 15px 0;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+  line-height: 1.8;
+  display: flex;
+  align-items: center;
+  font-size: 1.05rem;
+}
+
+.details-view p:last-child {
+  border-bottom: none;
+}
+
+.details-view strong {
+  margin-left: 12px;
+  font-weight: 600;
+  color: var(--primary-color);
+  min-width: 150px;
+  display: inline-block;
+  position: relative;
+}
+
+.details-view strong::after {
+  content: ':';
+  position: absolute;
+  left: -5px;
+}
+
+/* نموذج التعديل */
+.edit-form {
+  background-color: var(--card-background-light);
+  border-radius: var(--border-radius-lg);
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--primary-light);
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* مجموعة النموذج */
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--primary-dark);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.form-group label::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  margin-right: 8px;
+  display: inline-block;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 12px 15px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  background-color: var(--background-light);
+  color: var(--text-color);
+  width: 100%;
+  box-sizing: border-box;
+  transition: var(--transition-fast);
+  font-family: 'Tajawal', 'Cairo', 'Segoe UI', sans-serif;
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.form-group input:hover,
+.form-group textarea:hover,
+.form-group select:hover {
+  border-color: var(--primary-light);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(93, 92, 222, 0.2);
+}
+
+/* أزرار الإجراءات */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 2rem;
+  justify-content: flex-end;
+}
+
+.action-btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+}
+
+button {
+  padding: 12px 22px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  font-family: 'Tajawal', 'Cairo', 'Segoe UI', sans-serif;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: width 0.3s ease;
+}
+
+button:hover::before {
+  width: 100%;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+.back-btn {
+  background-color: #757575;
+  color: white;
+}
+
+.back-btn:hover {
+  background-color: #616161;
+}
+
+.back-btn::after {
+  content: '←';
+  margin-left: 8px;
+  font-size: 1.1em;
+}
+
+.add-schedule-btn {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.add-schedule-btn:hover:not(:disabled) {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+}
+
+.disabled-btn {
+  background-color: #95a5a6 !important;
+  color: #ecf0f1 !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
+.status-actions, .payment-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Responsive Buttons */
+@media (max-width: 768px) {
+  .actions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .status-actions, .payment-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .action-btn {
+    width: 100%;
+  }
+}
+
+.save-btn {
+  background-color: var(--success-color);
+  color: white;
+  margin-right: 10px;
+}
+
+.save-btn:hover {
+  background-color: var(--success-dark);
+}
+
+.save-btn::before {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.delete-schedule-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.delete-schedule-btn:hover:not(:disabled) {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+}
+/* نموذج جدول الدوام */
+.schedule-form {
+  background-color: var(--card-background-light);
+  border-radius: var(--border-radius-lg);
+  padding: 25px;
+  margin: 25px 0;
+  box-shadow: var(--shadow);
+  border-right: 4px solid var(--primary-color);
+  animation: slideDown 0.4s ease-out;
+  position: relative;
+}
+
+.schedule-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, var(--primary-color), var(--primary-light));
+  border-radius: 4px 0 0 4px;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* قائمة جداول الدوام */
+.schedules-list {
+  margin-top: 35px;
+}
+
+.schedule-item {
+  background-color: var(--card-background-light);
+  border-radius: var(--border-radius-lg);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  border-right: 4px solid var(--primary-color);
+  position: relative;
+  transition: var(--transition);
+}
+
+.schedule-item:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.schedule-item p {
+  margin: 10px 0;
+  font-size: 1.05rem;
+}
+
+.schedule-item strong {
+  color: var(--primary-color);
+  margin-left: 8px;
+  position: relative;
+  display: inline-block;
+  min-width: 150px;
+}
+
+.schedule-item strong::after {
+  content: ':';
+  position: absolute;
+  left: -5px;
+}
+
+.schedule-item .delete-schedule-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 8px 15px;
+  font-size: 14px;
+  border-radius: var(--border-radius-sm);
+}
+
+/* حالات التحميل والخطأ */
+.flight-details > div:first-child:not([class]) {
+  padding: 25px;
+  text-align: center;
+  background-color: var(--card-background-light);
+  border-radius: var(--border-radius-lg);
+  margin: 30px 0;
+  box-shadow: var(--shadow);
+  font-size: 1.1rem;
+  color: var(--primary-dark);
+}
+
+/* تصميم متجاوب مع الشاشات */
+@media (max-width: 768px) {
+  .flight-details {
+    padding: 15px;
+  }
+  
+  .flight-details h2 {
+    font-size: 1.6rem;
+  }
+  
+  .flight-details h3 {
+    font-size: 1.3rem;
+  }
+  
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .actions button {
+    width: 100%;
+    margin-bottom: 0;
+    padding: 15px;
+  }
+  
+  .schedule-item .delete-schedule-btn {
+    position: static;
+    margin-top: 15px;
+    width: 100%;
+  }
+  
+  .form-group {
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .save-btn {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 100%;
+  }
+  
+  .cancel-btn {
+    width: 100%;
+  }
+  
+  .details-view strong,
+  .schedule-item strong {
+    min-width: 120px;
+  }
+}
+
+/* تعديلات لـ Firefox في وضع RTL */
+@-moz-document url-prefix() {
+  .flight-details[dir="rtl"] button {
+    letter-spacing: 0;
+  }
+}
+
+/* معالجة خاصة لعناصر التاريخ والوقت في iOS */
+@supports (-webkit-touch-callout: none) {
+  input[type="date"],
+  input[type="time"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 46px;
+  }
+}
+
+/* رسائل النجاح والفشل */
+/* .success-message,
+.error-message {
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin: 15px 0;
+  font-weight: 600;
+  animation: fadeInUp 0.4s ease;
+}
+
+.success-message {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: var(--success-dark);
+  border: 1px solid var(--success-color);
+} */
+
+.error-message {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: var(--danger-dark);
+  border: 1px solid var(--danger-color);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* تنسيق للمعلومات الفارغة */
+.empty-state {
+  padding: 30px;
+  text-align: center;
+  background-color: var(--primary-ultra-light);
+  border-radius: var(--border-radius-lg);
+  margin: 20px 0;
+  color: var(--primary-dark);
+  border: 1px dashed var(--primary-light);
+}
+
+/* تحسين مظهر الأزرار */
+.button-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.button-with-icon.primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.button-with-icon.primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.button-with-icon.secondary {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.button-with-icon.secondary:hover {
+  background-color: var(--primary-ultra-light);
+}
+
+/* إضافة مؤثرات لحالة التحميل */
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.loading-state {
+  animation: pulse 1.5s infinite;
+  background-color: var(--primary-ultra-light);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* FlightDetails2.css */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: right;
+}
+
+.bg-white {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .md\:col-span-2 {
+    grid-column: span 2;
+  }
+}
+
+p {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.font-semibold {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.text-gray-600 {
+  color: #718096;
+  margin-left: 0.25rem;
+}
+
+.text-red-500 {
+  color: #e53e3e;
+}
+
+
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* RTL specific adjustments */
+[dir="rtl"] .text-gray-600 {
+  margin-left: 0;
+  margin-right: 0.25rem;
+}
+
+/* Loading and error states */
+.text-center.py-4 {
+  font-size: 1rem;
+  color: #4a5568;
+  padding: 2rem;
+  background-color: #f7fafc;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.text-center.py-4.text-red-500 {
+  background-color: #fff5f5;
+  border: 1px solid #feb2b2;
+}
+

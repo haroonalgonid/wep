@@ -1,0 +1,1670 @@
+/* خلفية كاملة */
+
+
+/* ===== الأساسيات ===== */
+:root {
+  --primary-color: #3b82f6;
+  --primary-dark: #2563eb;
+  --secondary-color: #10b981;
+  --accent-color: #f59e0b;
+  --danger-color: #ef4444;
+  --light-bg: #f9fafb;
+  --card-bg: #ffffff;
+  --text-dark: #1f2937;
+  --text-medium: #4b5563;
+  --text-light: #9ca3af;
+  --border-color: #e5e7eb;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --transition: all 0.3s ease;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Tajawal', 'Cairo', sans-serif;
+  background-color: var(--light-bg);
+  color: var(--text-dark);
+  direction: rtl;
+  text-align: right;
+}
+
+/* ===== تخطيط لوحة التحكم ===== */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: 70px 1fr;
+  grid-template-areas:
+    "header header"
+    "sidebar main";
+  min-height: 100vh;
+  background-color: var(--light-bg);
+}
+
+/* ===== الشريط العلوي ===== */
+.dashboard-header {
+  grid-area: header;
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow-sm);
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 20;
+
+  /* إضافة هذه الأسطر لجعل الهيدر ثابت بالأعلى */
+  position: sticky;
+  top: 0;
+  width: 100%;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-icon {
+  font-size: 1.5rem;
+}
+
+.header-logo h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+
+.user-profile:hover {
+  background-color: var(--border-color);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+/* ===== الشريط الجانبي ===== */
+.dashboard-sidebar {
+  grid-area: sidebar;
+  background-color: var(--card-bg);
+  border-left: 1px solid var(--border-color);
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 70px);
+  overflow-y: auto;
+  position: sticky;
+  top: 70px;
+}
+
+
+
+.sidebar-nav {
+  flex: 1;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+}
+
+.sidebar-nav li {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-nav li button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.975rem;
+  font-weight: 500;
+  color: var(--text-medium);
+  text-align: right;
+  transition: var(--transition);
+}
+
+.sidebar-nav li button:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--primary-color);
+}
+
+.sidebar-nav li.active button {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.nav-icon {
+  font-size: 1.25rem;
+}
+
+.sidebar-footer {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: transparent;
+  color: var(--danger-color);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.logout-button:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* ===== محتوى الصفحة ===== */
+.dashboard-main {
+  grid-area: main;
+  padding-top: 80px;
+  overflow-y: auto;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+}
+
+/* ===== زر إضافة رحلة ===== */
+.add-flight-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-md);
+}
+
+.add-flight-btn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.plus-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* ===== جدول الرحلات ===== */
+.flights-table-container {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.flights-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.flights-table th {
+  background-color: #f8fafc;
+  color: var(--text-medium);
+  font-weight: 600;
+  text-align: right;
+  padding: 1rem;
+  border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.flights-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-dark);
+  vertical-align: middle;
+}
+
+.flight-row {
+  transition: var(--transition);
+}
+
+.flight-row:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.airline-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.airline-icon {
+  font-size: 1.25rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* .edit-btn, .delete-btn {
+  border: none;
+  background: transparent;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.edit-btn {
+  color: var(--primary-color);
+}
+
+.edit-btn:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.delete-btn {
+  color: var(--danger-color);
+}
+
+.delete-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+} */
+
+/* ===== حالة التحميل ===== */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--text-medium);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(59, 130, 246, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== حالة فارغة ===== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 3rem;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--text-light);
+}
+
+.empty-state h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: var(--text-medium);
+  margin-bottom: 1.5rem;
+}
+
+.add-first-flight-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.add-first-flight-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+/* ===== الإحصائيات والبطاقات ===== */
+.booking-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: var(--text-medium);
+  text-align: center;
+}
+
+/* .message-box {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-medium);
+  border-right: 4px solid var(--primary-color);
+} */
+
+/* ===== بطاقات الإعدادات ===== */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.settings-card {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.settings-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.settings-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.settings-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+
+.settings-card p {
+  color: var(--text-medium);
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.settings-btn {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+}
+
+.settings-btn:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* ===== النافذة المنبثقة ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center; /* توسيط أفقي */
+  align-items: center; /* توسيط رأسي */
+  z-index: 1000;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-container {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.3s ease;
+  overflow: hidden;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.close-modal-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.close-modal-btn:hover {
+  color: var(--danger-color);
+}
+
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: calc(90vh - 150px);
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cancel-modal-btn {
+  background-color: transparent;
+  color: var(--text-medium);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.cancel-modal-btn:hover {
+  background-color: var(--light-bg);
+}
+
+/* ===== توافق الشاشات الصغيرة ===== */
+@media (max-width: 1024px) {
+  .dashboard-container {
+    grid-template-columns: 70px 1fr;
+    grid-template-areas:
+      "header header"
+      "sidebar main";
+  }
+  
+  .sidebar-header h2,
+  .user-info,
+  .nav-text,
+  .logout-button span:not(.logout-icon) {
+    display: none;
+  }
+  
+  .sidebar-nav li button {
+    justify-content: center;
+    padding: 1rem;
+  }
+  
+  .logout-button {
+    justify-content: center;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-stats,
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-main {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "main";
+  }
+  
+  .dashboard-sidebar {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    padding: 0;
+    flex-direction: row;
+    z-index: 90;
+    border-top: 1px solid var(--border-color);
+    border-left: none;
+  }
+  
+  .sidebar-header,
+  .sidebar-footer {
+    display: none;
+  }
+  
+  .sidebar-nav {
+    width: 100%;
+  }
+  
+  .sidebar-nav ul {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 60px;
+  }
+  
+  .sidebar-nav li {
+    margin: 0;
+    flex: 1;
+  }
+  
+  .sidebar-nav li button {
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    height: 60px;
+  }
+  
+  .nav-icon {
+    font-size: 1.5rem;
+  }
+  
+  .nav-text {
+    display: block;
+    font-size: 0.75rem;
+  }
+  
+  .dashboard-main {
+    padding-bottom: 80px;
+  }
+}
+
+/* ===== جدول الحجوزات ===== */
+.bookings-table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  background-color: var(--card-bg);
+  padding: 20px;
+}
+
+.bookings-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+}
+
+.bookings-table thead {
+  background: linear-gradient(135deg, #6a11cb, #2575fc); /* تدرج لوني */
+  color: white;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.bookings-table th,
+.bookings-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.bookings-table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.5px;
+}
+
+.bookings-table tbody tr {
+  transition: var(--transition);
+}
+
+.bookings-table tbody tr:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.bookings-table td {
+  color: var(--text-dark);
+  vertical-align: middle;
+}
+
+/* تخصيص حالة الحجز */
+.booking-status {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.booking-status[data-status="pending"] {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.booking-status[data-status="approved"] {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.booking-status[data-status="rejected"] {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* زر الإجراءات */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  border: none;
+  background: transparent;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.action-btn.edit {
+  color: var(--primary-color);
+}
+
+.action-btn.edit:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* .action-btn.delete {
+  color: var(--danger-color);
+} */
+
+/* .action-btn.delete:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+} */
+
+/* ===== بطاقات الحجوزات ===== */
+.booking-card {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: var(--transition);
+}
+
+.booking-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.booking-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.booking-card-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.booking-card-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.booking-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.booking-info label {
+  font-size: 0.875rem;
+  color: var(--text-medium);
+}
+
+.booking-info span {
+  font-size: 1rem;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+/* .booking-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+} */
+
+/* ===== توافق الشاشات الصغيرة ===== */
+@media (max-width: 768px) {
+  .booking-card-body {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-card-footer {
+    flex-direction: column;
+  }
+}
+
+/* Flight Details Container */
+.flight-details-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  direction: rtl;
+}
+
+/* Flight Details Title */
+.flight-details-title {
+  color: #333;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #51d53a;
+  position: relative;
+}
+
+/* Flight Information Container */
+.flight-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+  .flight-info {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Individual information items */
+.flight-info p {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  border-right: 3px solid #51d53a;
+  transition: all 0.2s ease;
+}
+
+.flight-info p:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.flight-info strong {
+  color: #51d53a;
+  margin-left: 0.5rem;
+}
+
+/* Status-specific styling */
+.flight-status {
+  grid-column: 1 / -1;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flight-status strong {
+  margin-left: 1rem;
+}
+
+/* Status indicators */
+.status-label {
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-block;
+}
+
+.status-pending {
+  background-color: #fff8e1;
+  color: #ffa000;
+  border: 1px solid #ffecb3;
+}
+
+.status-approved {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.status-rejected {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+/* Action buttons container */
+.flight-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  border-top: 1px solid #eee;
+  padding-top: 1.5rem;
+}
+
+/* Base button styles */
+.flight-action-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+/* Save button */
+.btn-save {
+  background-color: #2ed573;
+  color: white;
+  border: none;
+}
+
+.btn-save:hover {
+  background-color: #28c066;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 213, 115, 0.3);
+}
+
+.btn-save:active {
+  transform: translateY(0);
+}
+
+/* Cancel button */
+.btn-cancel {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+}
+
+.btn-cancel:hover {
+  background-color: #ee5253;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.btn-cancel:active {
+  transform: translateY(0);
+}
+
+/* Delete button */
+.edit-btn, .delete-btn {
+  width: 24px;
+  height: 24px;
+  font-size: 14px; /* تقليل حجم الأيقونة أو النص */
+  border-radius: 6px; /* تقليل استدارة الحواف */
+}
+
+.edit-btn:hover, .delete-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05); /* تخفيف تأثير التحويم */
+}
+  
+
+/* Disabled button styles */
+.flight-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Loading and error messages */
+.loading-message, .error-message {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.loading-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loading-message:before {
+  content: "";
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid #e0e0e0;
+  border-top-color: #51d53a;
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: #c62828;
+  border-left: 4px solid #c62828;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+.ticket-price {
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative; /* للتأكد من أن العناصر الداخلية تحترم حدود النافذة */
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.form-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-actions button[type="submit"] {
+  background: #4caf50;
+  color: white;
+}
+
+.form-actions button[type="button"] {
+  background: #f44336;
+  color: white;
+}
+
+.company-logo {
+  width: 100px; /* عرض الصورة */
+  height: auto; /* ارتفاع تلقائي للحفاظ على التناسب */
+  display: block; /* تأكد من أن الصورة تظهر كعنصر كتلة */
+}
+
+
+/* تنسيق العنوان والزر */
+.text-2xl.font-bold.text-gray-800 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.bg-blue-500.text-white.px-4.py-2.rounded {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.bg-blue-500.text-white.px-4.py-2.rounded:hover {
+  background-color: #2563eb;
+}
+
+/* تنسيق حالة التحميل */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-left-color: #3b82f6;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* تنسيق الجدول */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+  direction: rtl;
+}
+
+.data-table th {
+  background-color: #f7fafc;
+  color: #4a5568;
+  font-weight: 600;
+  padding: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.data-table tr:hover {
+  background-color: #f7fafc;
+  cursor: pointer;
+}
+
+/* تنسيق الشعار */
+.company-logo {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+/* تنسيق أزرار الإجراءات */
+.edit-btn, .delete-btn {
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.edit-btn {
+  background-color: #ebf8ff;
+  color: #3182ce;
+}
+
+.edit-btn:hover {
+  background-color: #bee3f8;
+}
+
+.delete-btn {
+  background-color: #fff5f5;
+  color: #e53e3e;
+}
+
+.delete-btn:hover {
+  background-color: #fed7d7;
+}
+
+/* تنسيق حالة الفارغة */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  border: 1px dashed #d1d5db;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: #9ca3af;
+}
+
+.empty-state h3 {
+  font-size: 1.25rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
+/* تنسيق حالة المطاعم */
+.status-approved, .status-pending {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+}
+
+.status-approved {
+  background-color: #c6f6d5;
+  color: #22543d;
+}
+
+.status-pending {
+  background-color: #fed7d7;
+  color: #822727;
+}
+
+/* تنسيق القسم */
+.dashboard-section {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+}
+
+.restaurant-details-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center; /* هذا يضمن الانتقال إلى المركز العمودي */
+  z-index: 1000;
+  direction: rtl;
+  overflow: auto; /* إضافة هذا لتمكين التمرير إذا كان المحتوى طويلاً */
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto; /* يبقى التمرير داخل المحتوى نفسه */
+  padding: 2rem;
+  position: relative;
+  margin: 20px 0; /* يضمن وجود مسافة من الأعلى والأسفل */
+}
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: #718096;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #f7fafc;
+  color: #e53e3e;
+}
+
+.modal-content h2 {
+  color: #2d3748;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  border-bottom: 2px solid #edf2f7;
+  padding-bottom: 1rem;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: transform 0.2s;
+}
+
+.detail-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.detail-label {
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.detail-value {
+  color: #2d3748;
+  font-size: 1rem;
+  word-break: break-word;
+}
+
+.detail-image {
+  width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+  border-radius: 6px;
+  margin-top: 0.5rem;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  padding: 0.5rem;
+}
+
+.control-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: a.5rem;
+  border-top: 2px solid #edf2f7;
+}
+
+.toggle-btn, .delete-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.toggle-btn.enable {
+  background-color: #9ae6b4;
+  color: #22543d;
+}
+
+.toggle-btn.enable:hover {
+  background-color: #68d391;
+}
+
+.toggle-btn.disable {
+  background-color: #feb2b2;
+  color: #742a2a;
+}
+
+.toggle-btn.disable:hover {
+  background-color: #fc8181;
+}
+
+.delete-btn {
+  background-color: #fff5f5;
+  color: #e53e3e;
+}
+
+.delete-btn:hover {
+  background-color: #fed7d7;
+}
+
+/* تصميم متجاوب للشاشات الصغيرة */
+@media (max-width: 640px) {
+  .modal-content {
+    padding: 1.5rem;
+    width: 95%;
+  }
+  
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .control-buttons {
+    flex-direction: column;
+  }
+  
+  .toggle-btn, .delete-btn {
+    width: 100%;
+  }
+}
+
+
+/* تنسيقات أزرار حالة الطلب والدفع */
+
+/* الأزرار الأساسية */
+.status-button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+}
+
+.status-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.status-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* أزرار حالة الطلب */
+.prepared-button {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.prepared-button:not(:disabled):hover {
+  background-color: #2563eb;
+}
+
+.delivered-button {
+  background-color: #10b981;
+  color: white;
+}
+
+.delivered-button:not(:disabled):hover {
+  background-color: #059669;
+}
+
+.cancel-button {
+  background-color: #ef4444;
+  color: white;
+}
+
+.cancel-button:not(:disabled):hover {
+  background-color: #dc2626;
+}
+
+/* أزرار حالة الدفع */
+.paid-button {
+  background-color: #10b981;
+  color: white;
+}
+
+.paid-button:not(:disabled):hover {
+  background-color: #059669;
+}
+
+.unpaid-button {
+  background-color: #ef4444;
+  color: white;
+}
+
+.unpaid-button:not(:disabled):hover {
+  background-color: #dc2626;
+}
+
+/* الحالة النشطة (عندما يكون الزر معطلاً لأنه الحالة الحالية) */
+.active-status {
+  position: relative;
+  padding-right: 30px;
+}
+
+.active-status::after {
+  content: "✓";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: bold;
+}
+
+/* تنسيقات البادجات (العناوين الصغيرة) */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.pending-badge {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.prepared-badge {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.delivered-badge {
+  background-color: #dcfce7;
+  color: #047857;
+}
+
+.cancelled-badge {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.paid-badge {
+  background-color: #dcfce7;
+  color: #047857;
+}
+
+.unpaid-badge {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* مجموعة الأزرار */
+.button-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* تأثيرات خاصة للأزرار عند النقر */
+.status-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
