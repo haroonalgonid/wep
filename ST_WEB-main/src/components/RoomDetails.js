@@ -10,18 +10,15 @@ function RoomDetails() {
   const [error, setError] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    type: '',
     pricePerNight: 0,
     bedCount: 0,
-    size: 0,
-    view: '',
-    amenities: [],
-    isAvailable: true
   });
 
   useEffect(() => {
     const fetchRoomDetails = async () => {
       try {
+        setError('');
+        setLoading(true);
         const token = localStorage.getItem('token');
         const response = await fetch(`https://backend-fpnx.onrender.com/hotels/room/${id}`, {
           headers: {
@@ -29,18 +26,18 @@ function RoomDetails() {
           }
         });
         
-        if (!response.ok) throw new Error('فشل في جلب تفاصيل الغرفة');
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('الغرفة غير موجودة');
+          }
+          throw new Error('فشل في جلب تفاصيل الغرفة');
+        }
         
         const data = await response.json();
         setRoom(data.room);
         setFormData({
-          type: data.room.type,
           pricePerNight: data.room.pricePerNight,
           bedCount: data.room.bedCount,
-          size: data.room.size,
-          view: data.room.view,
-          amenities: data.room.amenities,
-          isAvailable: data.room.isAvailable
         });
       } catch (err) {
         setError(err.message);
@@ -53,7 +50,10 @@ function RoomDetails() {
   }, [id]);
 
   const handleDelete = async () => {
+    if (!window.confirm('هل أنت متأكد من رغبتك في حذف هذه الغرفة؟')) return;
+    
     try {
+      setError('');
       const token = localStorage.getItem('token');
       const response = await fetch(`https://backend-fpnx.onrender.com/hotels/rooms/${id}`, {
         method: 'DELETE',
@@ -62,9 +62,14 @@ function RoomDetails() {
         }
       });
       
-      if (!response.ok) throw new Error('فشل في حذف الغرفة');
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('الغرفة غير موجودة');
+        }
+        throw new Error('فشل في حذف الغرفة');
+      }
       
-      navigate('/rooms'); // توجيه المستخدم إلى صفحة الغرف بعد الحذف
+      navigate('/dashboardHotel');
     } catch (err) {
       setError(err.message);
     }
@@ -72,6 +77,15 @@ function RoomDetails() {
 
   const handleUpdate = async () => {
     try {
+      setError('');
+      
+      if (formData.pricePerNight <= 0) {
+        throw new Error('السعر يجب أن يكون أكبر من الصفر');
+      }
+      if (formData.bedCount <= 0) {
+        throw new Error('عدد الأسرة يجب أن يكون أكبر من الصفر');
+      }
+
       const token = localStorage.getItem('token');
       const response = await fetch(`https://backend-fpnx.onrender.com/hotels/rooms/${id}`, {
         method: 'PUT',
@@ -79,14 +93,23 @@ function RoomDetails() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          pricePerNight: formData.pricePerNight,
+          bedCount: formData.bedCount
+        })
       });
       
-      if (!response.ok) throw new Error('فشل في تحديث الغرفة');
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('الغرفة غير موجودة');
+        }
+        throw new Error('فشل في تحديث الغرفة');
+      }
       
       const data = await response.json();
       setRoom(data.room);
       setEditMode(false);
+      window.location.reload(); // إعادة تحميل الصفحة لتحديث البيانات
     } catch (err) {
       setError(err.message);
     }
@@ -94,6 +117,12 @@ function RoomDetails() {
 
   const handleAvailabilityChange = async () => {
     try {
+      setError('');
+      
+      if (!room) {
+        throw new Error('الغرفة غير موجودة');
+      }
+
       const token = localStorage.getItem('token');
       const response = await fetch(`https://backend-fpnx.onrender.com/hotels/rooms/${id}/availability`, {
         method: 'PUT',
@@ -106,11 +135,16 @@ function RoomDetails() {
         })
       });
       
-      if (!response.ok) throw new Error('فشل في تغيير حالة الغرفة');
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('الغرفة غير موجودة');
+        }
+        throw new Error('فشل في تغيير حالة الغرفة');
+      }
       
       const data = await response.json();
       setRoom(data.room);
-      setFormData(prev => ({...prev, isAvailable: data.room.isAvailable}));
+      window.location.reload(); // إعادة تحميل الصفحة لتحديث البيانات
     } catch (err) {
       setError(err.message);
     }
@@ -120,7 +154,7 @@ function RoomDetails() {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'amenities' ? value.split(',') : value
+      [name]: value
     }));
   };
 
@@ -133,95 +167,62 @@ function RoomDetails() {
       <div className="room-content">
         <h1>غرفة {room.type}</h1>
         
+        {error && <div className="error">{error}</div>}
+        
         {editMode ? (
           <div className="edit-form">
-          <div className="form-group">
-            <label>النوع:</label>
-            <input 
-              type="text" 
-              name="type" 
-              value={formData.type} 
-              onChange={handleInputChange} 
-            />
+            <div className="form-group">
+              <label>السعر لليلة:</label>
+              <input 
+                type="number" 
+                name="pricePerNight" 
+                value={formData.pricePerNight} 
+                onChange={handleInputChange} 
+                min="1"
+              />
+            </div>
+            <div className="form-group">
+              <label>عدد الأسرة:</label>
+              <input 
+                type="number" 
+                name="bedCount" 
+                value={formData.bedCount} 
+                onChange={handleInputChange} 
+                min="1"
+              />
+            </div>
+            <button onClick={handleUpdate}>حفظ التعديلات</button>
           </div>
-          <div className="form-group">
-            <label>السعر لليلة:</label>
-            <input 
-              type="number" 
-              name="pricePerNight" 
-              value={formData.pricePerNight} 
-              onChange={handleInputChange} 
-            />
-          </div>
-          <div className="form-group">
-            <label>عدد الأسرة:</label>
-            <input 
-              type="number" 
-              name="bedCount" 
-              value={formData.bedCount} 
-              onChange={handleInputChange} 
-            />
-          </div>
-          <div className="form-group">
-            <label>المساحة (م²):</label>
-            <input 
-              type="number" 
-              name="size" 
-              value={formData.size} 
-              onChange={handleInputChange} 
-            />
-          </div>
-          <div className="form-group">
-            <label>الإطلالة:</label>
-            <input 
-              type="text" 
-              name="view" 
-              value={formData.view} 
-              onChange={handleInputChange} 
-            />
-          </div>
-          <div className="form-group">
-            <label>المرافق (افصلها بفواصل):</label>
-            <input 
-              type="text" 
-              name="amenities" 
-              value={formData.amenities.join(',')} 
-              onChange={handleInputChange} 
-            />
-          </div>
-          <button onClick={handleUpdate}>حفظ التعديلات</button>
-        </div>
-      ) : (
-        <>
-          <div className="room-images">
-            {room.images.map((img, index) => (
-              <img key={index} src={img} alt={`صورة الغرفة ${index}`} />
-            ))}
-          </div>
-          <div className="room-info">
-            <p>السعر لليلة: ${room.pricePerNight}</p>
-            <p>عدد الأسرة: {room.bedCount}</p>
-            <p>المساحة: {room.size} متر مربع</p>
-            <p>الإطلالة: {room.view}</p>
-            <p>المرافق: {room.amenities.join('، ')}</p>
-            <p>الحالة: {room.isAvailable ? 'متاحة' : 'محجوزة'}</p>
-          </div>
-        </>
-      )}
+        ) : (
+          <>
+            <div className="room-images">
+              {room.images?.map((img, index) => (
+                <img key={index} src={img} alt={`صورة الغرفة ${index}`} />
+              ))}
+            </div>
+            <div className="room-info">
+              <p>السعر لليلة: ${room.pricePerNight}</p>
+              <p>عدد الأسرة: {room.bedCount}</p>
+              <p>المساحة: {room.size} متر مربع</p>
+              <p>الإطلالة: {room.view}</p>
+              <p>المرافق: {room.amenities?.join('، ')}</p>
+              <p>الحالة: {room.isAvailable ? 'متاحة' : 'محجوزة'}</p>
+            </div>
+          </>
+        )}
       </div>
       <div className="room-actions">
-      <button onClick={() => setEditMode(!editMode)}>
-        {editMode ? 'إلغاء التعديل' : 'تعديل الغرفة'}
-      </button>
-      <button onClick={handleAvailabilityChange}>
-        {room.isAvailable ? 'حجز الغرفة' : 'تحرير الغرفة'}
-      </button>
-      <button onClick={handleDelete} className="delete-schedule-btn">
-        حذف الغرفة
-      </button>
+        <button onClick={() => setEditMode(!editMode)}>
+          {editMode ? 'إلغاء التعديل' : 'تعديل الغرفة'}
+        </button>
+        <button onClick={handleAvailabilityChange}>
+          {room.isAvailable ? 'حجز الغرفة' : 'تحرير الغرفة'}
+        </button>
+        <button onClick={handleDelete} className="delete-schedule-btn">
+          حذف الغرفة
+        </button>
+      </div>
     </div>
-    </div>
-
   );
 }
 

@@ -233,24 +233,24 @@ function BookingCarDetails() {
             <>
               <p><strong>الشركة المصنعة:</strong> {booking.car.make}</p>
               <p><strong>الموديل:</strong> {booking.car.model}</p>
-              <p><strong>السنة:</strong> {booking.car.year}</p>
-              <p><strong>نوع السيارة:</strong> 
+              {/* <p><strong>السنة:</strong> {booking.car.year}</p> */}
+              {/* <p><strong>نوع السيارة:</strong> 
                 {booking.car.type === 'sedan' ? 'سيدان' : 
                  booking.car.type === 'suv' ? 'دفع رباعي' : 
                  booking.car.type === 'truck' ? 'شاحنة' : 
                  booking.car.type === 'luxury' ? 'فاخرة' : booking.car.type}
-              </p>
+              </p> */}
               <p><strong>سعر اليوم:</strong> {booking.car.pricePerDay} $</p>
-              <p><strong>عدد المقاعد:</strong> {booking.car.seats}</p>
+              {/* <p><strong>عدد المقاعد:</strong> {booking.car.seats}</p> */}
               <p><strong>ناقل الحركة:</strong> 
                 {booking.car.transmission === 'automatic' ? 'أوتوماتيك' : 'يدوي'}
               </p>
-              <p><strong>نوع الوقود:</strong> 
+              {/* <p><strong>نوع الوقود:</strong> 
                 {booking.car.fuelType === 'gasoline' ? 'بنزين' : 
                  booking.car.fuelType === 'diesel' ? 'ديزل' : 
                  booking.car.fuelType === 'electric' ? 'كهربائي' : booking.car.fuelType}
-              </p>
-              <p><strong>رقم اللوحة:</strong> {booking.car.plateNumber}</p>
+              </p> */}
+              {/* <p><strong>رقم اللوحة:</strong> {booking.car.plateNumber}</p> */}
             </>
           ) : (
             <p className="error-message">معلومات السيارة غير متوفرة</p>

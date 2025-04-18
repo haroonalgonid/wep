@@ -10,59 +10,43 @@ function CarDetails() {
   const [error, setError] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    make: '',
-    model: '',
-    year: 0,
-    type: '',
     pricePerDay: 0,
-    seats: 0,
-    transmission: '',
-    fuelType: '',
     mileage: 0,
-    features: [],
-    plateNumber: '',
-    isAvailable: true
+    plateNumber: ''
   });
 
-  useEffect(() => {
-    const fetchCarDetails = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`https://backend-fpnx.onrender.com/carrental/car/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        
-        if (!response.ok) throw new Error('فشل في جلب تفاصيل السيارة');
-        
-        const data = await response.json();
-        setCar(data.car);
-        setFormData({
-          make: data.car.make,
-          model: data.car.model,
-          year: data.car.year,
-          type: data.car.type,
-          pricePerDay: data.car.pricePerDay,
-          seats: data.car.seats,
-          transmission: data.car.transmission,
-          fuelType: data.car.fuelType,
-          mileage: data.car.mileage,
-          features: data.car.features,
-          plateNumber: data.car.plateNumber,
-          isAvailable: data.car.isAvailable
-        });
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchCarDetails = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`https://backend-fpnx.onrender.com/carrental/car/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) throw new Error('فشل في جلب تفاصيل السيارة');
+      
+      const data = await response.json();
+      setCar(data.car);
+      setFormData({
+        pricePerDay: data.car.pricePerDay,
+        mileage: data.car.mileage,
+        plateNumber: data.car.plateNumber
+      });
+      setError('');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCarDetails();
   }, [id]);
 
   const handleDelete = async () => {
+    setLoading(true);
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`https://backend-fpnx.onrender.com/carrental/cars/${id}`, {
@@ -74,13 +58,16 @@ function CarDetails() {
       
       if (!response.ok) throw new Error('فشل في حذف السيارة');
       
-      navigate('/cars'); // توجيه المستخدم إلى صفحة السيارات بعد الحذف
+      navigate('/dashboardCarRental');
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleUpdate = async () => {
+    setLoading(true);
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`https://backend-fpnx.onrender.com/carrental/cars/${id}`, {
@@ -89,20 +76,27 @@ function CarDetails() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...car,
+          pricePerDay: formData.pricePerDay,
+          mileage: formData.mileage,
+          plateNumber: formData.plateNumber
+        })
       });
       
       if (!response.ok) throw new Error('فشل في تحديث السيارة');
       
-      const data = await response.json();
-      setCar(data.car);
+      await fetchCarDetails();
       setEditMode(false);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleAvailabilityChange = async () => {
+    setLoading(true);
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`https://backend-fpnx.onrender.com/carrental/cars/${id}/availability`, {
@@ -118,11 +112,11 @@ function CarDetails() {
       
       if (!response.ok) throw new Error('فشل في تغيير حالة السيارة');
       
-      const data = await response.json();
-      setCar(data.car);
-      setFormData(prev => ({...prev, isAvailable: data.car.isAvailable}));
+      await fetchCarDetails();
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -130,14 +124,15 @@ function CarDetails() {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'features' ? value.split(',') : value
+      [name]: value
     }));
   };
 
   if (loading) return <div>جاري التحميل...</div>;
   if (error) return <div>خطأ: {error}</div>;
-  if (!car) return <div>السيارة غير موجودة</div>;
-
+  if (!car && !loading) return <div>السيارة غير موجودة</div>;
+  if (!car) return <div>جاري التحميل...</div>;
+  
   return (
     <div className="room-details">
       <div className="room-content">
@@ -146,74 +141,11 @@ function CarDetails() {
         {editMode ? (
           <div className="edit-form">
             <div className="form-group">
-              <label>الشركة المصنعة:</label>
-              <input 
-                type="text" 
-                name="make" 
-                value={formData.make} 
-                onChange={handleInputChange} 
-              />
-            </div>
-            <div className="form-group">
-              <label>الموديل:</label>
-              <input 
-                type="text" 
-                name="model" 
-                value={formData.model} 
-                onChange={handleInputChange} 
-              />
-            </div>
-            <div className="form-group">
-              <label>السنة:</label>
-              <input 
-                type="number" 
-                name="year" 
-                value={formData.year} 
-                onChange={handleInputChange} 
-              />
-            </div>
-            <div className="form-group">
-              <label>النوع:</label>
-              <input 
-                type="text" 
-                name="type" 
-                value={formData.type} 
-                onChange={handleInputChange} 
-              />
-            </div>
-            <div className="form-group">
               <label>السعر لليوم:</label>
               <input 
                 type="number" 
                 name="pricePerDay" 
                 value={formData.pricePerDay} 
-                onChange={handleInputChange} 
-              />
-            </div>
-            <div className="form-group">
-              <label>عدد المقاعد:</label>
-              <input 
-                type="number" 
-                name="seats" 
-                value={formData.seats} 
-                onChange={handleInputChange} 
-              />
-            </div>
-            <div className="form-group">
-              <label>ناقل الحركة:</label>
-              <input 
-                type="text" 
-                name="transmission" 
-                value={formData.transmission} 
-                onChange={handleInputChange} 
-              />
-            </div>
-            <div className="form-group">
-              <label>نوع الوقود:</label>
-              <input 
-                type="text" 
-                name="fuelType" 
-                value={formData.fuelType} 
                 onChange={handleInputChange} 
               />
             </div>
@@ -227,15 +159,6 @@ function CarDetails() {
               />
             </div>
             <div className="form-group">
-              <label>المميزات (افصلها بفواصل):</label>
-              <input 
-                type="text" 
-                name="features" 
-                value={formData.features.join(',')} 
-                onChange={handleInputChange} 
-              />
-            </div>
-            <div className="form-group">
               <label>رقم اللوحة:</label>
               <input 
                 type="text" 
@@ -245,6 +168,7 @@ function CarDetails() {
               />
             </div>
             <button onClick={handleUpdate}>حفظ التعديلات</button>
+            <button onClick={() => setEditMode(false)}>إلغاء</button>
           </div>
         ) : (
           <>
@@ -272,15 +196,19 @@ function CarDetails() {
         )}
       </div>
       <div className="room-actions">
-        <button onClick={() => setEditMode(!editMode)}>
-          {editMode ? 'إلغاء التعديل' : 'تعديل السيارة'}
-        </button>
-        <button onClick={handleAvailabilityChange}>
-          {car.isAvailable ? 'حجز السيارة' : 'تحرير السيارة'}
-        </button>
-        <button onClick={handleDelete} className="delete-schedule-btn">
-          حذف السيارة
-        </button>
+        {!editMode && (
+          <>
+            <button onClick={() => setEditMode(true)}>
+              تعديل السيارة
+            </button>
+            <button onClick={handleAvailabilityChange}>
+              {car.isAvailable ? 'حجز السيارة' : 'تحرير السيارة'}
+            </button>
+            <button onClick={handleDelete} className="delete-schedule-btn">
+              حذف السيارة
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

@@ -376,7 +376,7 @@ function UsersManagement({ token }) {
                                 />
                             </div>
 
-                            <div className="form-group">
+                            {/* <div className="form-group">
                                 <label>الدور</label>
                                 <select
                                     name="role"
@@ -386,7 +386,7 @@ function UsersManagement({ token }) {
                                     <option value="user">مستخدم</option>
                                     <option value="admin">مسؤول</option>
                                 </select>
-                            </div>
+                            </div> */}
 
                             <div className="form-actions">
                                 <button type="submit">حفظ التعديلات</button>

@@ -108,8 +108,7 @@ function DashboardRestaurant() {
     }
   }, [currentPage]);
 
-  // إضافة وجبة جديدة
- // إضافة وجبة جديدة - النسخة المعدلة
+// إضافة وجبة جديدة
  const handleFormSubmit = async (newItem) => {
   setIsAddingItem(true);
   setMenuError("");
