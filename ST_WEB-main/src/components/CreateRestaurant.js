@@ -12,6 +12,7 @@ const CreateRestaurantForm = ({ onClose, onSuccess }) => {
       address: "",
       phoneNumber: "",
       email: "",
+      description: "", // Added description field
     },
     identityImage: null,
     restaurantLogo: null,
@@ -191,6 +192,13 @@ const CreateRestaurantForm = ({ onClose, onSuccess }) => {
           name="restaurantData.email"
           placeholder="البريد الإلكتروني للمطعم"
           value={formData.restaurantData.email}
+          onChange={handleChange}
+          required
+        />
+        <textarea
+          name="restaurantData.description"
+          placeholder="وصف المطعم"
+          value={formData.restaurantData.description}
           onChange={handleChange}
           required
         />

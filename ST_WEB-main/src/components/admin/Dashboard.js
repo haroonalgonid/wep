@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/Dashbordflight.css";
-import { User, FileText, Plane, Hospital, Hotel, Utensils, LayoutDashboard, LogOut , Car} from "lucide-react";
+import { User, FileText, Plane, Hospital, Hotel, Utensils, LayoutDashboard, LogOut, Car, BarChart2 } from "lucide-react";
+import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend, ArcElement } from 'chart.js';
+import { Bar, Pie } from 'react-chartjs-2';
+
 import UserManagement from "./UsersManagement";
 import AirlineDetails from "./AirlineDetails";
 import HospitalDetails from "./HospitalDetails";
@@ -23,9 +26,10 @@ import CreateCarRentalForm from "../CreateCarRentalForm";
 import RestaurantDetails from "../RestaurantDetails";
 import CarRentalDetails from "../admin/CarRentalDetails";
 
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, ArcElement);
 
 function Dashboard() {
-  const [currentPage, setCurrentPage] = useState("users");
+  const [currentPage, setCurrentPage] = useState("statistics");
   const [requests, setRequests] = useState([]);
   const [airlines, setAirlines] = useState([]);
   const [hospitals, setHospitals] = useState([]);
@@ -39,6 +43,7 @@ function Dashboard() {
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [selectedCarRental, setSelectedCarRental] = useState(null);
+  const [statistics, setStatistics] = useState(null);
 
   const [selectedAirline, setSelectedAirline] = useState(null);
   const [showCreateAirlineForm, setShowCreateAirlineForm] = useState(false);
@@ -62,6 +67,24 @@ function Dashboard() {
     setSelectedCarRental(null);
   };
   
+
+  const fetchStatistics = () => {
+    setLoading(true);
+    axios.get("https://backend-fpnx.onrender.com/stats/statistics", {
+      headers: {
+        Authorization: token,
+      },
+    })
+    .then((response) => {
+      setStatistics(response.data);
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error("Error fetching statistics:", error);
+      setLoading(false);
+    });
+  };
+
   const handleLogout = () => {
     // حذف التوكن من localStorage أو sessionStorage
     localStorage.removeItem('token'); // أو أي مفتاح استخدمته
@@ -269,6 +292,12 @@ function Dashboard() {
         setLoading(false);
       });
   };
+
+  useEffect(() => {
+    if (currentPage === "statistics") {
+      fetchStatistics();
+    }
+  }, [currentPage, token]);
 
   // جديد: دالة للتعامل مع تغيير حالة شركة تأجير السيارات
   const handleToggleCarRentalApproval = (carRentalId, isApproved) => {
@@ -706,6 +735,145 @@ function Dashboard() {
             )}
           </div>
         );
+        case "statistics":
+          if (!statistics) return (
+            <div className="empty-state">
+              <div className="empty-icon"><BarChart2 size={80} /></div>
+              <h3>لا توجد بيانات إحصائية</h3>
+            </div>
+          );
+        
+          // بيانات الرسومات البيانية
+          const flightStatusData = {
+            labels: statistics.airline.flightStatusCounts.map(item => item._id),
+            datasets: [{
+              label: 'حالة الرحلات',
+              data: statistics.airline.flightStatusCounts.map(item => item.count),
+              backgroundColor: ['#4CAF50', '#2196F3', '#FFC107'],
+            }]
+          };
+        
+          const bookingsData = {
+            labels: ['الفنادق', 'تأجير السيارات'],
+            datasets: [{
+              label: 'إجمالي الحجوزات',
+              data: [statistics.hotel.totalBookings, statistics.carRental.totalBookings],
+              backgroundColor: ['#FF6384', '#36A2EB'],
+            }]
+          };
+        
+          const entitiesData = {
+            labels: ['شركات الطيران', 'الفنادق', 'المستشفيات', 'المطاعم', 'تأجير السيارات'],
+            datasets: [{
+              label: 'عدد الجهات المسجلة',
+              data: [
+                statistics.airline.totalAirlines,
+                statistics.hotel.totalHotels,
+                statistics.hospital.totalHospitals,
+                statistics.restaurant.totalRestaurants,
+                statistics.carRental.totalRentals
+              ],
+              backgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+                '#4BC0C0',
+                '#9966FF'
+              ],
+            }]
+          };
+        
+          return (
+            <div className="dashboard-section">
+              <h2 className="section-title">الإحصائيات العامة</h2>
+              
+              <div className="stats-and-charts-grid">
+                {/* إحصائيات سريعة في الجانب الأيمن */}
+                <div className="quick-stats-container">
+                  <div className="quick-stats">
+                    <div className="stat-card">
+                      <h4><User size={18} /> المستخدمين</h4>
+                      <p>{statistics.users.totalUsers}</p>
+                    </div>
+                    <div className="stat-card">
+                      <h4><Plane size={18} /> الرحلات</h4>
+                      <p>{statistics.airline.totalFlights}</p>
+                    </div>
+                    <div className="stat-card">
+                      <h4><Hotel size={18} /> الغرف</h4>
+                      <p>{statistics.hotel.availableRooms} متاحة</p>
+                    </div>
+                    <div className="stat-card">
+                      <h4><Utensils size={18} /> الطلبات</h4>
+                      <p>{statistics.restaurant.totalOrders}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* الرسومات البيانية في الجانب الأيسر */}
+                <div className="charts-container">
+                  <div className="charts-grid">
+                    {/* رسمة بيانية للجهات المسجلة */}
+                    <div className="chart-card">
+                      <h3>الجهات المسجلة في النظام</h3>
+                      <div className="chart-container">
+                        <Bar 
+                          data={entitiesData}
+                          options={{
+                            responsive: true,
+                            plugins: {
+                              legend: {
+                                position: 'top',
+                                rtl: true,
+                              },
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+          
+                    {/* رسمة بيانية دائرية للحجوزات */}
+                    <div className="chart-card">
+                      <h3>توزيع الحجوزات</h3>
+                      <div className="chart-container">
+                        <Pie 
+                          data={bookingsData}
+                          options={{
+                            responsive: true,
+                            plugins: {
+                              legend: {
+                                position: 'top',
+                                rtl: true,
+                              },
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+          
+                    {/* رسمة بيانية لحالة الرحلات */}
+                    <div className="chart-card">
+                      <h3>حالة الرحلات الجوية</h3>
+                      <div className="chart-container">
+                        <Bar 
+                          data={flightStatusData}
+                          options={{
+                            responsive: true,
+                            plugins: {
+                              legend: {
+                                position: 'top',
+                                rtl: true,
+                              },
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
       default:
         return null;
     }
@@ -741,12 +909,19 @@ function Dashboard() {
       <aside className="dashboard-sidebar">
         <nav className="sidebar-nav">
           <ul>
+          <li className={currentPage === "statistics" ? "active" : ""}>
+  <button onClick={() => setCurrentPage("statistics")}>
+    <BarChart2 size={20} />
+    <span className="nav-text">الإحصائيات</span>
+  </button>
+</li>
             <li className={currentPage === "users" ? "active" : ""}>
               <button onClick={() => setCurrentPage("users")}>
                 <User size={20} />
                 <span className="nav-text">المستخدمين</span>
               </button>
             </li>
+            
             <li className={currentPage === "airlines" ? "active" : ""}>
               <button onClick={() => setCurrentPage("airlines")}>
                 <Plane size={20} />

@@ -13,6 +13,7 @@ const CreateHotelForm = ({ onClose, onSuccess }) => {
       phoneNumber: "",
       website: "",
       email: "",
+      description: "", // <-- تمت الإضافة هنا
       facilities: [],
       stars: 0,
     },
@@ -22,6 +23,7 @@ const CreateHotelForm = ({ onClose, onSuccess }) => {
     license: null,
     images: [],
   });
+
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -163,6 +165,7 @@ const CreateHotelForm = ({ onClose, onSuccess }) => {
           onChange={handleChange}
           required
         />
+         
         <input
           type="password"
           name="password"
@@ -197,6 +200,14 @@ const CreateHotelForm = ({ onClose, onSuccess }) => {
           placeholder="العنوان"
           value={formData.hotelData.address}
           onChange={handleChange}
+          required
+        />
+        <textarea
+          name="hotelData.description"
+          placeholder="وصف الفندق"
+          value={formData.hotelData.description}
+          onChange={handleChange}
+          rows={4}
           required
         />
         <input

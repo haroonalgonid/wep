@@ -13,6 +13,7 @@ const CreateHospitalForm = ({ onClose, onSuccess }) => {
       phoneNumber: "",
       website: "",
       email: "",
+      description: "", // Added description field
       facilities: [],
     },
     identityImage: null,
@@ -178,16 +179,16 @@ const CreateHospitalForm = ({ onClose, onSuccess }) => {
           onChange={handleChange}
           required
         />
-    <select
-  name="hospitalData.type"
-  value={formData.hospitalData.type}
-  onChange={handleChange}
-  required
->
-  <option value="">اختر نوع المستشفى</option>
-  <option value="general">مستشفى عام</option>
-  <option value="specialized">مستشفى متخصص</option>
-</select>
+        <select
+          name="hospitalData.type"
+          value={formData.hospitalData.type}
+          onChange={handleChange}
+          required
+        >
+          <option value="">اختر نوع المستشفى</option>
+          <option value="general">مستشفى عام</option>
+          <option value="specialized">مستشفى متخصص</option>
+        </select>
         <input
           type="text"
           name="hospitalData.address"
@@ -217,6 +218,13 @@ const CreateHospitalForm = ({ onClose, onSuccess }) => {
           name="hospitalData.email"
           placeholder="البريد الإلكتروني للمستشفى"
           value={formData.hospitalData.email}
+          onChange={handleChange}
+          required
+        />
+        <textarea
+          name="hospitalData.description"
+          placeholder="وصف المستشفى"
+          value={formData.hospitalData.description}
           onChange={handleChange}
           required
         />
