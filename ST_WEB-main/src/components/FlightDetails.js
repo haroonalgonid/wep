@@ -8,33 +8,35 @@ function FlightDetails() {
   const [flight, setFlight] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+    const [isSaving, setIsSaving] = useState(false); // أضف هذا السطر
+
   const [formData, setFormData] = useState({});
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!token) {
-      console.error("Token not found. Please log in first.");
-      setLoading(false);
-      return;
-    }
+useEffect(() => {
+  if (!token) {
+    console.error("Token not found. Please log in first.");
+    setLoading(false);
+    return;
+  }
 
-    axios
-      .get(`https://backend-fpnx.onrender.com/flights/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setFlight(response.data);
-        setFormData(response.data); // تعيين بيانات النموذج للتعديل
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the flight details:", error);
-        setLoading(false);
-      });
-  }, [id, token]);
+  axios
+    .get(`https://backend-fpnx.onrender.com/flights/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => {
+      setFlight(response.data.flight); // تغيير هنا
+      setFormData(response.data.flight); // تغيير هنا
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error("There was an error fetching the flight details:", error);
+      setLoading(false);
+    });
+}, [id, token]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,23 +46,27 @@ function FlightDetails() {
     });
   };
 
-  const handleSave = () => {
-    axios
-      .put(`https://backend-fpnx.onrender.com/flights/${id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setFlight(response.data); // تحديث البيانات بعد التعديل
-        setIsEditing(false); // الخروج من وضع التعديل
-        alert("تم تحديث الرحلة بنجاح!");
-      })
-      .catch((error) => {
-        console.error("There was an error updating the flight:", error);
-        alert("فشل في تحديث الرحلة.");
-      });
-  };
+const handleSave = async () => {
+  setIsSaving(true);
+  try {
+    const response = await axios.put(
+      `https://backend-fpnx.onrender.com/flights/${id}`,
+      formData, // تم تغيير هذا من { flight: formData } إلى formData مباشرة
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    
+    // تحديث الحالة بالبيانات الجديدة من الاستجابة
+    setFlight(response.data);
+    setFormData(response.data);
+    setIsEditing(false);
+    alert("تم تحديث الرحلة بنجاح!");
+  } catch (error) {
+    console.error("Error updating flight:", error);
+    alert("فشل في تحديث الرحلة: " + (error.response?.data?.message || error.message));
+  } finally {
+    setIsSaving(false);
+  }
+};
 
   const handleDelete = () => {
     if (window.confirm("هل أنت متأكد من حذف هذه الرحلة؟")) {

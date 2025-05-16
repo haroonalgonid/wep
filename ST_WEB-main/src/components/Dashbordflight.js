@@ -46,7 +46,7 @@ function AdminDashboard() {
     if (type === 'documents') setUploadingDocuments(true);
 
     const response = await axios.post(
-      'http://localhost:5000/upload', // تأكد من وجود هذا الرابط في سيرفرك
+      'https://backend-fpnx.onrender.com/upload', // تأكد من وجود هذا الرابط في سيرفرك
       formData,
       {
         headers: {
@@ -82,7 +82,7 @@ function AdminDashboard() {
     setError(null);
     try {
       const response = await axios.get(
-        "http://localhost:5000/flights/airlines/my-company",
+        "https://backend-fpnx.onrender.com/flights/airlines/my-company",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -106,7 +106,7 @@ function AdminDashboard() {
   const handleUpdateCompany = async () => {
     try {
       const response = await axios.put(
-        "http://localhost:5000/flights/airlines/my-company",
+        "https://backend-fpnx.onrender.com/flights/airlines/my-company",
         editFormData,
         {
           headers: {
@@ -592,49 +592,51 @@ function AdminDashboard() {
     </div>
   </div>
 ) : (
-                  <div className="company-info">
-                    <div className="info-header">
-                      <h3>{companyData.companyName}</h3>
-                      <button
-                        onClick={() => setIsEditing(true)}
-                        className="edit-btn"
-                      >
-                        تعديل البيانات
-                      </button>
-                    </div>
+                  <div className="bookings-table-container">
+  <div className="bookings-table-header">
+    <h3>{companyData.companyName}</h3>
+    <button
+      onClick={() => setIsEditing(true)}
+      className="booking-action-btn"
+    >
+      تعديل البيانات
+    </button>
+  </div>
 
-                    <div className="info-grid">
-                      <div className="info-item">
-                        <span className="info-label">رمز IATA:</span>
-                        <span className="info-value">{companyData.IATACode}</span>
-                      </div>
-
-                      <div className="info-item">
-                        <span className="info-label">البريد الإلكتروني:</span>
-                        <span className="info-value">{companyData.email}</span>
-                      </div>
-
-                      <div className="info-item">
-                        <span className="info-label">رقم الهاتف:</span>
-                        <span className="info-value">{companyData.phoneNumber}</span>
-                      </div>
-
-                      <div className="info-item">
-                        <span className="info-label">الموقع الإلكتروني:</span>
-                        <a
-                          href={companyData.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="info-value"
-                        >
-                          {companyData.website}
-                        </a>
-                      </div>
-
-                      <div className="info-item">
-                        <span className="info-label">العنوان الرئيسي:</span>
-                        <span className="info-value">{companyData.headquartersAddress}</span>
-                      </div>
+  <div className="bookings-table">
+    <table>
+      <tbody>
+        <tr className="booking-row">
+          <td className="booking-label">رمز IATA:</td>
+          <td>{companyData.IATACode}</td>
+        </tr>
+        <tr className="booking-row">
+          <td className="booking-label">البريد الإلكتروني:</td>
+          <td>{companyData.email}</td>
+        </tr>
+        <tr className="booking-row">
+          <td className="booking-label">رقم الهاتف:</td>
+          <td>{companyData.phoneNumber}</td>
+        </tr>
+        <tr className="booking-row">
+          <td className="booking-label">الموقع الإلكتروني:</td>
+          <td>
+            <a
+              href={companyData.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="booking-link"
+            >
+              {companyData.website}
+            </a>
+          </td>
+        </tr>
+        <tr className="booking-row">
+          <td className="booking-label">العنوان الرئيسي:</td>
+          <td>{companyData.headquartersAddress}</td>
+        </tr>
+      </tbody>
+    </table>
 
                       {/* أضف حقول العرض الأخرى حسب الحاجة */}
                     </div>

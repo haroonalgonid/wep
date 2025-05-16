@@ -279,19 +279,24 @@ function Dashboard() {
   };
 
   // جديد: دالة لجلب شركات تأجير السيارات
-  const fetchCarRentalsData = () => {
-    setLoading(true);
-    fetchCarRentals(token)
-      .then((response) => {
-        // استخراج مصفوفة الشركات من الاستجابة
-        setCarRentals(response.data.companies || []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching car rentals:", error);
-        setLoading(false);
-      });
-  };
+const fetchCarRentalsData = () => {
+  setLoading(true);
+  fetchCarRentals(token)
+    .then((response) => {
+      // تعديل هنا لاستخراج البيانات بشكل صحيح
+      const formattedData = response.data.companies.map(item => ({
+        ...item.company, // ننسخ كل خصائص كائن الشركة
+        averageRating: item.averageRating,
+        totalReviews: item.totalReviews
+      }));
+      setCarRentals(formattedData);
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error("Error fetching car rentals:", error);
+      setLoading(false);
+    });
+};
 
   useEffect(() => {
     if (currentPage === "statistics") {
@@ -708,23 +713,23 @@ function Dashboard() {
                       <th>الإجراءات</th>
                     </tr>
                   </thead>
-                  <tbody>
-  {carRentals.slice().reverse().map((carRental) => (
-    <tr key={carRental._id} onClick={() => setSelectedCarRental(carRental)}>
-      <td>{carRental.name}</td>
-      <td>{carRental.address}</td>
-      <td>{carRental.phoneNumber}</td>
-      <td>
-        <span className={carRental.isApproved ? "status-approved" : "status-pending"}>
-          {carRental.isApproved ? "مفعل" : "غير مفعل"}
-        </span>
-      </td>
-      <td>
-        <button className="edit-btn">تعديل</button>
-      </td>
-    </tr>
-  ))}
-</tbody>
+                   <tbody>
+        {carRentals.slice().reverse().map((carRental) => (
+          <tr key={carRental._id} onClick={() => setSelectedCarRental(carRental)}>
+            <td>{carRental.name}</td>
+            <td>{carRental.address}</td>
+            <td>{carRental.phoneNumber}</td>
+            <td>
+              <span className={carRental.isApproved ? "status-approved" : "status-pending"}>
+                {carRental.isApproved ? "مفعل" : "غير مفعل"}
+              </span>
+            </td>
+            <td>
+              <button className="edit-btn">تعديل</button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
                 </table>
               </div>
             ) : (
