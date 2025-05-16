@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AddFlightForm from "./AddFlightForm";
 import "../styles/Dashbordflight.css";
 import axios from "axios";
-import { User, FileText, Plane, Hospital, Hotel, Utensils, LayoutDashboard, LogOut, BarChart3 , FileTextIcon} from "lucide-react";
+import { User, Plane, Hospital, Hotel, Utensils, LayoutDashboard, LogOut, BarChart3, FileTextIcon, Settings } from "lucide-react";
 
 function AdminDashboard() {
   const [showModal, setShowModal] = useState(false);
@@ -25,6 +25,103 @@ function AdminDashboard() {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [profileLoading, setProfileLoading] = useState(true);
+  const [companyData, setCompanyData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFormData, setEditFormData] = useState({});
+  const [loadingCompany, setLoadingCompany] = useState(false);
+  const [error, setError] = useState(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingLicense, setUploadingLicense] = useState(false);
+  const [uploadingDocuments, setUploadingDocuments] = useState(false);
+
+
+  const handleImageUpload = async (file, type) => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    // تحديد حالة التحميل بناءً على نوع الصورة
+    if (type === 'logo') setUploadingLogo(true);
+    if (type === 'license') setUploadingLicense(true);
+    if (type === 'documents') setUploadingDocuments(true);
+
+    const response = await axios.post(
+      'http://localhost:5000/upload', // تأكد من وجود هذا الرابط في سيرفرك
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    // تحديث حالة النموذج بناءً على نوع الصورة
+    setEditFormData(prev => ({
+      ...prev,
+      [type === 'logo' ? 'companyLogo' : 
+       type === 'license' ? 'operatingLicenseImage' : 
+       'legalDocumentsImage']: response.data.url
+    }));
+
+    return response.data.url;
+  } catch (error) {
+    console.error(`Error uploading ${type} image:`, error);
+    alert(`فشل تحميل ${type === 'logo' ? 'الشعار' : type === 'license' ? 'صورة الرخصة' : 'المستندات القانونية'}`);
+    return null;
+  } finally {
+    if (type === 'logo') setUploadingLogo(false);
+    if (type === 'license') setUploadingLicense(false);
+    if (type === 'documents') setUploadingDocuments(false);
+  }
+};
+
+  // 2. تعديل دالة جلب بيانات الشركة
+  const fetchCompanyData = async () => {
+    setLoadingCompany(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/flights/airlines/my-company",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // البيانات تأتي مباشرة في response.data وليس response.data.data
+      setCompanyData(response.data);
+      setEditFormData(response.data);
+    } catch (error) {
+      console.error("Error fetching company data:", error);
+      setError("فشل في جلب بيانات الشركة. يرجى المحاولة مرة أخرى.");
+    } finally {
+      setLoadingCompany(false);
+    }
+  };
+
+
+  // 3. تعديل دالة التحديث
+  const handleUpdateCompany = async () => {
+    try {
+      const response = await axios.put(
+        "http://localhost:5000/flights/airlines/my-company",
+        editFormData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setCompanyData(response.data);
+      setIsEditing(false);
+      alert("تم تحديث بيانات الشركة بنجاح");
+    } catch (error) {
+      console.error("Error updating company data:", error);
+      alert("حدث خطأ أثناء تحديث بيانات الشركة");
+    }
+  };
 
 
   const handleLogout = () => {
@@ -39,32 +136,32 @@ function AdminDashboard() {
     navigate('/login');
   };
 
- // دالة لجلب معلومات المسؤول
- const fetchModeratorProfile = async () => {
-  setProfileLoading(true);
-  try {
-    const response = await axios.get("https://backend-fpnx.onrender.com/moderators/profile", {
-      headers: {
-        Authorization: token,
-      },
-    });
-    
-    setModeratorInfo({
-      name: response.data.name,
-      role: "مسؤول",
-      moderatorType: response.data.moderatorType
-    });
-  } catch (error) {
-    console.error("Error fetching moderator profile:", error);
-  } finally {
-    setProfileLoading(false);
-  }
-};
+  // دالة لجلب معلومات المسؤول
+  const fetchModeratorProfile = async () => {
+    setProfileLoading(true);
+    try {
+      const response = await axios.get("https://backend-fpnx.onrender.com/moderators/profile", {
+        headers: {
+          Authorization: token,
+        },
+      });
 
-useEffect(() => {
-  fetchModeratorProfile();
-}, [currentPage, token]);
-  
+      setModeratorInfo({
+        name: response.data.name,
+        role: "مسؤول",
+        moderatorType: response.data.moderatorType
+      });
+    } catch (error) {
+      console.error("Error fetching moderator profile:", error);
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchModeratorProfile();
+  }, [currentPage, token]);
+
   // دالة لجلب الرحلات
   const fetchFlights = () => {
     setLoading(true);
@@ -122,20 +219,22 @@ useEffect(() => {
   };
 
   // جلب البيانات عند تغيير الصفحة
-// جلب البيانات عند تغيير الصفحة
-useEffect(() => {
-  const fetchData = async () => {
-    await fetchModeratorProfile(); // انتظر جلب بيانات البروفايل أولاً
-    
-    if (currentPage === "flights") {
-      fetchFlights();
-    } else if (currentPage === "bookings") {
-      fetchBookings();
-    }
-  };
+  // جلب البيانات عند تغيير الصفحة
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchModeratorProfile();
 
-  fetchData();
-}, [currentPage, token]);
+      if (currentPage === "flights") {
+        fetchFlights();
+      } else if (currentPage === "bookings") {
+        fetchBookings();
+      } else if (currentPage === "settings") {
+        fetchCompanyData();
+      }
+    };
+
+    fetchData();
+  }, [currentPage, token]);
 
   // إغلاق النافذة المنبثقة بعد إضافة رحلة
   const handleFormSubmit = () => {
@@ -223,7 +322,7 @@ useEffect(() => {
               </div>
             ) : (
               <div className="empty-state">
-                <div className="empty-icon"><Plane  /></div>
+                <div className="empty-icon"><Plane /></div>
                 <h3>لا توجد رحلات حالياً</h3>
                 <p>قم بإضافة رحلات جديدة لتظهر هنا</p>
                 <button
@@ -275,58 +374,283 @@ useEffect(() => {
                     </tr>
                   </thead>
                   <tbody>
-  {bookings.map((booking) => (
-    <tr key={booking._id} className="booking-row" onClick={() => handleBookingClick(booking._id)}>
-      <td>{booking.user.fullName}</td>
-      <td>{booking.flight.flightNumber}</td>
-      <td>{booking.seatNumber || "غير محدد"}</td>
-      <td>{booking.status}</td>
-    </tr>
-  ))}
-</tbody>
+                    {bookings.map((booking) => (
+                      <tr key={booking._id} className="booking-row" onClick={() => handleBookingClick(booking._id)}>
+                        <td>{booking.user.fullName}</td>
+                        <td>{booking.flight.flightNumber}</td>
+                        <td>{booking.seatNumber || "غير محدد"}</td>
+                        <td>{booking.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
                 </table>
               </div>
             ) : (
               <div className="empty-state">
-                <div className="empty-icon"><FileTextIcon  /></div>
+                <div className="empty-icon"><FileTextIcon /></div>
                 <h3>لا توجد حجوزات حالياً</h3>
                 <p>سيتم عرض الحجوزات هنا عند توفرها</p>
               </div>
             )}
           </div>
         );
-      // case "settings":
-      //   return (
-      //     <div className="dashboard-section">
-      //       <h2 className="section-title">الإعدادات</h2>
-      //       <div className="settings-grid">
-      //         <div className="settings-card">
-      //           <div className="settings-icon">👤</div>
-      //           <h3>إعدادات الحساب</h3>
-      //           <p>تعديل المعلومات الشخصية وكلمة المرور</p>
-      //           <button className="settings-btn">فتح الإعدادات</button>
-      //         </div>
-      //         <div className="settings-card">
-      //           <div className="settings-icon">🔔</div>
-      //           <h3>إعدادات الإشعارات</h3>
-      //           <p>تخصيص إشعارات البريد الإلكتروني والتطبيق</p>
-      //           <button className="settings-btn">تخصيص</button>
-      //         </div>
-      //         <div className="settings-card">
-      //           <div className="settings-icon">🔒</div>
-      //           <h3>الأمان والخصوصية</h3>
-      //           <p>إدارة إعدادات الأمان والخصوصية</p>
-      //           <button className="settings-btn">إدارة</button>
-      //         </div>
-      //         <div className="settings-card">
-      //           <div className="settings-icon">🎨</div>
-      //           <h3>تخصيص الواجهة</h3>
-      //           <p>تغيير مظهر وألوان لوحة التحكم</p>
-      //           <button className="settings-btn">تخصيص</button>
-      //         </div>
-      //       </div>
-      //     </div>
-      //   );
+      case "settings":
+        return (
+          <div className="dashboard-section">
+            <h2 className="section-title">إعدادات الشركة</h2>
+
+            {loadingCompany ? (
+              <div className="loading-spinner">
+                <div className="spinner"></div>
+                <p>جاري تحميل بيانات الشركة...</p>
+              </div>
+            ) : error ? (
+              <div className="error-message">
+                <p>{error}</p>
+                <button onClick={fetchCompanyData} className="retry-btn">
+                  إعادة المحاولة
+                </button>
+              </div>
+            ) : companyData ? (
+              <div className="company-settings">
+            {isEditing ? (
+  <div className="edit-form">
+    <h3>تعديل بيانات الشركة</h3>
+    
+    {/* حقل اسم الشركة */}
+    <div className="form-group">
+      <label>اسم الشركة *</label>
+      <input
+        type="text"
+        value={editFormData.companyName || ''}
+        onChange={(e) => setEditFormData({...editFormData, companyName: e.target.value})}
+        required
+      />
+    </div>
+
+    {/* حقل رمز IATA */}
+    <div className="form-group">
+      <label>رمز IATA *</label>
+      <input
+        type="text"
+        value={editFormData.IATACode || ''}
+        onChange={(e) => setEditFormData({...editFormData, IATACode: e.target.value})}
+        required
+      />
+    </div>
+
+    {/* حقل الوصف */}
+    <div className="form-group">
+      <label>وصف الشركة</label>
+      <textarea
+        value={editFormData.description || ''}
+        onChange={(e) => setEditFormData({...editFormData, description: e.target.value})}
+        rows="3"
+      />
+    </div>
+
+    {/* تحميل شعار الشركة */}
+    <div className="form-group">
+      <label>شعار الشركة</label>
+      <div className="image-upload-container">
+        {editFormData.companyLogo && (
+          <img 
+            src={editFormData.companyLogo} 
+            alt="شعار الشركة الحالي" 
+            className="current-image"
+          />
+        )}
+        <input
+          type="file"
+          id="logo-upload"
+          accept="image/*"
+          onChange={(e) => e.target.files[0] && handleImageUpload(e.target.files[0], 'logo')}
+          disabled={uploadingLogo}
+          hidden
+        />
+        <label htmlFor="logo-upload" className="upload-btn">
+          {uploadingLogo ? 'جاري التحميل...' : 'تغيير الشعار'}
+        </label>
+      </div>
+    </div>
+
+    {/* تحميل صورة الرخصة التشغيلية */}
+    <div className="form-group">
+      <label>صورة الرخصة التشغيلية</label>
+      <div className="image-upload-container">
+        {editFormData.operatingLicenseImage && (
+          <img 
+            src={editFormData.operatingLicenseImage} 
+            alt="رخصة التشغيل الحالية" 
+            className="current-image"
+          />
+        )}
+        <input
+          type="file"
+          id="license-upload"
+          accept="image/*"
+          onChange={(e) => e.target.files[0] && handleImageUpload(e.target.files[0], 'license')}
+          disabled={uploadingLicense}
+          hidden
+        />
+        <label htmlFor="license-upload" className="upload-btn">
+          {uploadingLicense ? 'جاري التحميل...' : 'تغيير الرخصة'}
+        </label>
+      </div>
+    </div>
+
+    {/* تحميل المستندات القانونية */}
+    <div className="form-group">
+      <label>المستندات القانونية</label>
+      <div className="image-upload-container">
+        {editFormData.legalDocumentsImage && (
+          <img 
+            src={editFormData.legalDocumentsImage} 
+            alt="المستندات القانونية الحالية" 
+            className="current-image"
+          />
+        )}
+        <input
+          type="file"
+          id="documents-upload"
+          accept="image/*"
+          onChange={(e) => e.target.files[0] && handleImageUpload(e.target.files[0], 'documents')}
+          disabled={uploadingDocuments}
+          hidden
+        />
+        <label htmlFor="documents-upload" className="upload-btn">
+          {uploadingDocuments ? 'جاري التحميل...' : 'تغيير المستندات'}
+        </label>
+      </div>
+    </div>
+
+    {/* باقي الحقول */}
+    <div className="form-row">
+      <div className="form-group">
+        <label>البريد الإلكتروني *</label>
+        <input
+          type="email"
+          value={editFormData.email || ''}
+          onChange={(e) => setEditFormData({...editFormData, email: e.target.value})}
+          required
+        />
+      </div>
+      <div className="form-group">
+        <label>رقم الهاتف *</label>
+        <input
+          type="tel"
+          value={editFormData.phoneNumber || ''}
+          onChange={(e) => setEditFormData({...editFormData, phoneNumber: e.target.value})}
+          required
+        />
+      </div>
+    </div>
+
+    <div className="form-group">
+      <label>الموقع الإلكتروني</label>
+      <input
+        type="url"
+        value={editFormData.website || ''}
+        onChange={(e) => setEditFormData({...editFormData, website: e.target.value})}
+      />
+    </div>
+
+    <div className="form-group">
+      <label>العنوان الرئيسي</label>
+      <input
+        type="text"
+        value={editFormData.headquartersAddress || ''}
+        onChange={(e) => setEditFormData({...editFormData, headquartersAddress: e.target.value})}
+      />
+    </div>
+
+    <div className="form-group">
+      <label>رقم تسجيل الشركة</label>
+      <input
+        type="text"
+        value={editFormData.companyRegistrationNumber || ''}
+        onChange={(e) => setEditFormData({...editFormData, companyRegistrationNumber: e.target.value})}
+      />
+    </div>
+
+    <div className="form-actions">
+      <button 
+        type="button"
+        onClick={() => setIsEditing(false)} 
+        className="cancel-btn"
+      >
+        إلغاء
+      </button>
+      <button 
+        type="button"
+        onClick={handleUpdateCompany} 
+        className="save-btn"
+        disabled={uploadingLogo || uploadingLicense || uploadingDocuments}
+      >
+        {uploadingLogo || uploadingLicense || uploadingDocuments ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+      </button>
+    </div>
+  </div>
+) : (
+                  <div className="company-info">
+                    <div className="info-header">
+                      <h3>{companyData.companyName}</h3>
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="edit-btn"
+                      >
+                        تعديل البيانات
+                      </button>
+                    </div>
+
+                    <div className="info-grid">
+                      <div className="info-item">
+                        <span className="info-label">رمز IATA:</span>
+                        <span className="info-value">{companyData.IATACode}</span>
+                      </div>
+
+                      <div className="info-item">
+                        <span className="info-label">البريد الإلكتروني:</span>
+                        <span className="info-value">{companyData.email}</span>
+                      </div>
+
+                      <div className="info-item">
+                        <span className="info-label">رقم الهاتف:</span>
+                        <span className="info-value">{companyData.phoneNumber}</span>
+                      </div>
+
+                      <div className="info-item">
+                        <span className="info-label">الموقع الإلكتروني:</span>
+                        <a
+                          href={companyData.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="info-value"
+                        >
+                          {companyData.website}
+                        </a>
+                      </div>
+
+                      <div className="info-item">
+                        <span className="info-label">العنوان الرئيسي:</span>
+                        <span className="info-value">{companyData.headquartersAddress}</span>
+                      </div>
+
+                      {/* أضف حقول العرض الأخرى حسب الحاجة */}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="no-data">
+                <p>لا توجد بيانات للشركة</p>
+                <button onClick={fetchCompanyData} className="retry-btn">
+                  جلب البيانات
+                </button>
+              </div>
+            )}
+          </div>
+        );
       default:
         return null;
     }
@@ -337,28 +661,28 @@ useEffect(() => {
       {/* شريط العلوي */}
       <header className="dashboard-header">
         <div className="header-logo">
-        <span className="logo-icon"><Plane /></span>
-        <h1>لوحة تحكم الرحلات</h1>
+          <span className="logo-icon"><Plane /></span>
+          <h1>لوحة تحكم الرحلات</h1>
         </div>
         <div className="header-controls">
-        <div className="user-profile">
-  <div className="user-avatar">
-    <User size={20} />
-  </div>
-  <div className="user-info">
-    {profileLoading ? (
-      <div>جاري التحميل...</div>
-    ) : (
-      <>
-        <span className="user-name">{moderatorInfo.name}</span>
-        <span className="user-role">
-          {moderatorInfo.role}
-          {moderatorInfo.moderatorType && ` - ${moderatorInfo.moderatorType}`}
-        </span>
-      </>
-    )}
-  </div>
-</div>
+          <div className="user-profile">
+            <div className="user-avatar">
+              <User size={20} />
+            </div>
+            <div className="user-info">
+              {profileLoading ? (
+                <div>جاري التحميل...</div>
+              ) : (
+                <>
+                  <span className="user-name">{moderatorInfo.name}</span>
+                  <span className="user-role">
+                    {moderatorInfo.role}
+                    {moderatorInfo.moderatorType && ` - ${moderatorInfo.moderatorType}`}
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </header>
 
@@ -372,29 +696,29 @@ useEffect(() => {
           <ul>
             <li className={currentPage === "flights" ? "active" : ""}>
               <button onClick={() => setCurrentPage("flights")}>
-              <span className="nav-icon"><Plane size={24} /></span>
-              <span className="nav-text">إدارة الرحلات</span>
+                <span className="nav-icon"><Plane size={24} /></span>
+                <span className="nav-text">إدارة الرحلات</span>
               </button>
             </li>
             <li className={currentPage === "bookings" ? "active" : ""}>
               <button onClick={() => setCurrentPage("bookings")}>
-              <span className="nav-icon"><FileTextIcon size={24} /></span>
-              <span className="nav-text">الحجوزات</span>
+                <span className="nav-icon"><FileTextIcon size={24} /></span>
+                <span className="nav-text">الحجوزات</span>
               </button>
             </li>
-            {/* <li className={currentPage === "settings" ? "active" : ""}>
+            <li className={currentPage === "settings" ? "active" : ""}>
               <button onClick={() => setCurrentPage("settings")}>
-                <span className="nav-icon">⚙️</span>
+                <span className="nav-icon"><Settings size={24} /></span>
                 <span className="nav-text">الإعدادات</span>
               </button>
-            </li> */}
+            </li>
           </ul>
         </nav>
         <div className="sidebar-footer">
-        <button className="logout-button" onClick={handleLogout}>
-      <LogOut className="logout-icon w-5 h-5" />
-      <span>تسجيل الخروج</span>
-    </button>
+          <button className="logout-button" onClick={handleLogout}>
+            <LogOut className="logout-icon w-5 h-5" />
+            <span>تسجيل الخروج</span>
+          </button>
         </div>
       </aside>
 
